@@ -2,7 +2,6 @@
   "name": "npm-sum",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "directories": {
     "test": "test",
     "bin": "bin"
@@ -24,6 +23,10 @@
     "eslint": "^3.11.1"
   },
   "dependencies": {
-    "commander": "^2.9.0"
+    "commander": "^2.9.0",
+    "indent-string": "^3.0.0",
+    "longest": "^1.0.1",
+    "pad-right": "^0.2.2",
+    "word-wrap": "^1.1.0"
   }
 }
