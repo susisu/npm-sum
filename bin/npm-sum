@@ -67,7 +67,7 @@ exec(`npm view --json --loglevel silent "${pkg}"`, { encoding: "utf8" }, (err, s
         items.push({ label: "Version", field: data.version });
     }
     // homepage
-    if (data.homepage && data.homepage !== "") {
+    if (data.homepage) {
         items.push({ label: "Homepage", field: data.homepage });
     }
     // author
@@ -79,7 +79,7 @@ exec(`npm view --json --loglevel silent "${pkg}"`, { encoding: "utf8" }, (err, s
         items.push({ label: "License", field: data.license });
     }
     // description
-    if (data.description && data.description !== "") {
+    if (data.description) {
         items.push({ label: "Description", field: data.description });
     }
     // keywords
