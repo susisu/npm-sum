@@ -55,7 +55,9 @@ exec(`npm view --json --loglevel silent "${pkg}"`, { encoding: "utf8" }, (err, s
     // create summary
     const items = [];
     // name
-    items.push({ label: "Name", field: data.name });
+    if (data.name) {
+        items.push({ label: "Name", field: data.name });
+    }
     // version
     if (data.time && data.time[data.version]) {
         const date = colorDate(new Date(data.time[data.version]).toLocaleString());
@@ -69,9 +71,13 @@ exec(`npm view --json --loglevel silent "${pkg}"`, { encoding: "utf8" }, (err, s
         items.push({ label: "Homepage", field: data.homepage });
     }
     // author
-    items.push({ label: "Author", field: data.author });
+    if (data.author) {
+        items.push({ label: "Author", field: data.author });
+    }
     // license
-    items.push({ label: "License", field: data.license });
+    if (data.license) {
+        items.push({ label: "License", field: data.license });
+    }
     // description
     if (data.description && data.description !== "") {
         items.push({ label: "Description", field: data.description });
