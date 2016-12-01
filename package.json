@@ -1,6 +1,6 @@
 {
   "name": "npm-sum",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Show a brief summary of package information registered on npm.",
   "directories": {
     "test": "test",
