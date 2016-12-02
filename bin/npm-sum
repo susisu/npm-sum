@@ -25,11 +25,7 @@ program.version(self.version, "-v, --version");
 program.option("--no-dependencies", "do not show dependencies");
 program.parse(process.argv);
 
-const pkg = program.args[0];
-// show help and quit if package name is not specified
-if (typeof pkg === "undefined") {
-    program.help();
-}
+const pkg = typeof program.args[0] === "undefined" ? "" : program.args[0];
 
 // fetch package information via npm
 exec(`npm view --json --loglevel silent "${pkg}"`, { encoding: "utf8" }, (err, stdout) => {
