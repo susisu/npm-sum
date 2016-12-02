@@ -15,6 +15,7 @@ const wrap    = require("wrap-ansi");
 const longest = require("longest");
 const pad     = require("pad-right");
 const chalk   = require("chalk");
+const strip   = require("strip-ansi");
 
 process.title = "npm-sum";
 
@@ -129,7 +130,7 @@ function createSummary(items) {
     const fieldSize = WIDTH - (labelSize + " : ".length);
     const list = items.map(item => {
         const label = chalk.bold(pad(item.label, labelSize, " "));
-        if (item.field.length <= fieldSize && item.field.indexOf("\n") < 0) {
+        if (strip(item.field).length <= fieldSize && item.field.indexOf("\n") < 0) {
             const field = highlightLink(item.field);
             return `${label} : ${field}`;
         }

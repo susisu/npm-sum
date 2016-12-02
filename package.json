@@ -29,6 +29,7 @@
     "indent-string": "^3.0.0",
     "longest": "^1.0.1",
     "pad-right": "^0.2.2",
+    "strip-ansi": "^3.0.1",
     "wrap-ansi": "^2.1.0"
   }
 }
