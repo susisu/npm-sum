@@ -11,7 +11,7 @@ const self = require("../package.json");
 const exec    = require("child_process").exec;
 
 const indent  = require("indent-string");
-const wrap    = require("word-wrap");
+const wrap    = require("wrap-ansi");
 const longest = require("longest");
 const pad     = require("pad-right");
 
@@ -102,7 +102,7 @@ exec(`npm view --json --loglevel silent "${pkg}"`, { encoding: "utf8" }, (err, s
                 return `${colorTag(pad(tag, size, " "))} : ${version}`;
             }
         });
-        items.push({ label: "Tags", field: list.join("\n"), nowrap: true });
+        items.push({ label: "Tags", field: list.join("\n") });
     }
     // binaries
     if (data.bin) {
@@ -123,12 +123,7 @@ function createSummary(items) {
             return `${label} : ${field}`;
         }
         else {
-            const field = highlightLink(indent(
-                item.nowrap
-                    ? item.field
-                    : wrap(item.field, { width: WIDTH - INDENT * 2, indent: "", trim: true }),
-                INDENT
-            ));
+            const field = indent(wrap(highlightLink(item.field), WIDTH - INDENT * 2), INDENT);
             return `${label} :\n${field}`;
         }
     });

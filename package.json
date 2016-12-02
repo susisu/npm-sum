@@ -28,6 +28,6 @@
     "indent-string": "^3.0.0",
     "longest": "^1.0.1",
     "pad-right": "^0.2.2",
-    "word-wrap": "^1.1.0"
+    "wrap-ansi": "^2.1.0"
   }
 }
