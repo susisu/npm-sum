@@ -14,6 +14,7 @@ const indent  = require("indent-string");
 const wrap    = require("wrap-ansi");
 const longest = require("longest");
 const pad     = require("pad-right");
+const chalk   = require("chalk");
 
 process.title = "npm-sum";
 
@@ -61,7 +62,7 @@ exec(`npm view --json --loglevel silent "${pkg}"`, { encoding: "utf8" }, (err, s
     // version
     if (data.version) {
         if (data.time && data.time[data.version]) {
-            const date = colorDate(new Date(data.time[data.version]).toLocaleString());
+            const date = chalk.green(new Date(data.time[data.version]).toLocaleString());
             items.push({ label: "Version", field: `${data.version} (${date})` });
         }
         else {
@@ -95,11 +96,11 @@ exec(`npm view --json --loglevel silent "${pkg}"`, { encoding: "utf8" }, (err, s
         const list = tags.map(tag => {
             const version = data["dist-tags"][tag];
             if (data.time && data.time[version]) {
-                const date = colorDate(new Date(data.time[version]).toLocaleString());
-                return `${colorTag(pad(tag, size, " "))} : ${version} (${date})`;
+                const date = chalk.green(new Date(data.time[version]).toLocaleString());
+                return `${chalk.bold.yellow(pad(tag, size, " "))} : ${version} (${date})`;
             }
             else {
-                return `${colorTag(pad(tag, size, " "))} : ${version}`;
+                return `${chalk.bold.yellow(pad(tag, size, " "))} : ${version}`;
             }
         });
         items.push({ label: "Tags", field: list.join("\n") });
@@ -117,7 +118,7 @@ function createSummary(items) {
     const labelSize = longest(items.map(item => item.label)).length;
     const fieldSize = WIDTH - (labelSize + " : ".length);
     const list = items.map(item => {
-        const label = colorLabel(pad(item.label, labelSize, " "));
+        const label = chalk.bold(pad(item.label, labelSize, " "));
         if (item.field.length <= fieldSize && item.field.indexOf("\n") < 0) {
             const field = highlightLink(item.field);
             return `${label} : ${field}`;
@@ -132,21 +133,5 @@ function createSummary(items) {
 
 function highlightLink(text) {
     // TODO: better regexp?
-    // blue, underline
-    return text.replace(/(https?\:\/\/[0-9A-Za-z\-_\.\/#&\?\=\+%]+)/g, "\u001b[4;34m$1\u001b[24;39m");
-}
-
-function colorLabel(label) {
-    // bold
-    return `\u001b[1m${label}\u001b[22m`;
-}
-
-function colorTag(tag) {
-    // yellow, bold
-    return `\u001b[1;33m${tag}\u001b[22;39m`;
-}
-
-function colorDate(date) {
-    // green
-    return `\u001b[32m${date}\u001b[39m`;
+    return text.replace(/(https?\:\/\/[0-9A-Za-z\-_\.\/#&\?\=\+%]+)/g, url => chalk.blue.underline(url));
 }
