@@ -21,6 +21,7 @@ process.title = "npm-sum";
 const program = require("commander");
 program.usage("[options] [<@scope>/]<name>[@<version>]");
 program.version(self.version, "-v, --version");
+program.option("--no-dependencies", "do not show dependencies");
 program.parse(process.argv);
 
 const pkg = program.args[0];
@@ -108,6 +109,15 @@ exec(`npm view --json --loglevel silent "${pkg}"`, { encoding: "utf8" }, (err, s
     // binaries
     if (data.bin) {
         items.push({ label: "Binaries", field: Object.keys(data.bin).sort().join(", ") });
+    }
+    // dependencies
+    if (program.dependencies && data.dependencies) {
+        const names = Object.keys(data.dependencies).sort();
+        const list = names.map(name => {
+            const version = data.dependencies[name];
+            return `${name}${chalk.cyan("@" + version)}`;
+        });
+        items.push({ label: "Dependencies", field: list.join(", ") });
     }
 
     // output
