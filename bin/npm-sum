@@ -115,7 +115,7 @@ exec(`npm view --json --loglevel silent "${pkg}"`, { encoding: "utf8" }, (err, s
         const names = Object.keys(data.dependencies).sort();
         const list = names.map(name => {
             const version = data.dependencies[name];
-            return `${name}${chalk.cyan("@" + version)}`;
+            return `${name}@${chalk.cyan(version)}`;
         });
         items.push({ label: "Dependencies", field: list.join(", ") });
     }
