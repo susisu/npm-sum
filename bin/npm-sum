@@ -59,12 +59,14 @@ exec(`npm view --json --loglevel silent "${pkg}"`, { encoding: "utf8" }, (err, s
         items.push({ label: "Name", field: data.name });
     }
     // version
-    if (data.time && data.time[data.version]) {
-        const date = colorDate(new Date(data.time[data.version]).toLocaleString());
-        items.push({ label: "Version", field: `${data.version} (${date})` });
-    }
-    else {
-        items.push({ label: "Version", field: data.version });
+    if (data.version) {
+        if (data.time && data.time[data.version]) {
+            const date = colorDate(new Date(data.time[data.version]).toLocaleString());
+            items.push({ label: "Version", field: `${data.version} (${date})` });
+        }
+        else {
+            items.push({ label: "Version", field: data.version });
+        }
     }
     // homepage
     if (data.homepage) {
