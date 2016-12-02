@@ -33,11 +33,11 @@ if (typeof pkg === "undefined") {
 // fetch package information via npm
 exec(`npm view --json --loglevel silent "${pkg}"`, { encoding: "utf8" }, (err, stdout) => {
     if (err) {
-        process.stderr.write(`${err.toString().trim()}\nMaybe package was not found\n`);
+        process.stderr.write(`${err.toString().trim()}\nMaybe couldn't find package\n`);
         process.exit(1);
     }
     if (stdout.length === 0) {
-        process.stderr.write("Error: No data\nMaybe specified version was not found\n");
+        process.stderr.write("Error: No data\nMaybe couldn't find specified version\n");
         process.exit(1);
     }
     let data;

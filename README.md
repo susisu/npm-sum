@@ -1,5 +1,5 @@
 # npm-sum
-Show a brief summary of package information registered on npm.
+Show brief summary of package information registered on npm.
 
 ``` shell
 $ npm i -g npm-sum
