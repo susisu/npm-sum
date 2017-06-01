@@ -29,116 +29,119 @@ const pkg = typeof program.args[0] === "undefined" ? "" : program.args[0];
 
 // fetch package information via npm
 exec(`npm view --json --loglevel silent "${pkg}"`, { encoding: "utf8" }, (err, stdout) => {
-    if (err) {
-        process.stderr.write(`${err.toString().trim()}\nMaybe couldn't find package\n`);
-        process.exit(1);
-    }
-    if (stdout.length === 0) {
-        process.stderr.write("Error: No data\nMaybe couldn't find specified version\n");
-        process.exit(1);
-    }
-    let data;
-    try {
-        data = JSON.parse(stdout);
-    }
-    catch (err) {
-        process.stderr.write(`${err.toString().trim()}\nMaybe data is broken\n`);
-        process.exit(1);
-    }
+  if (err) {
+    process.stderr.write(`${err.toString().trim()}\nMaybe couldn't find package\n`);
+    process.exit(1);
+  }
+  if (stdout.length === 0) {
+    process.stderr.write("Error: No data\nMaybe couldn't find specified version\n");
+    process.exit(1);
+  }
+  let data;
+  try {
+    data = JSON.parse(stdout);
+  }
+  catch (err) {
+    process.stderr.write(`${err.toString().trim()}\nMaybe data is broken\n`);
+    process.exit(1);
+  }
 
-    // use last one if data contains multiple versions
-    if (Array.isArray(data)) {
-        data = data[data.length - 1];
-    }
+  // use last one if data contains multiple versions
+  if (Array.isArray(data)) {
+    data = data[data.length - 1];
+  }
 
-    // create summary
-    const items = [];
-    // name
-    if (data.name) {
-        items.push({ label: "Name", field: data.name });
+  // create summary
+  const items = [];
+  // name
+  if (data.name) {
+    items.push({ label: "Name", field: data.name });
+  }
+  // version
+  if (data.version) {
+    if (data.time && data.time[data.version]) {
+      const date = chalk.green(new Date(data.time[data.version]).toLocaleString());
+      items.push({ label: "Version", field: `${data.version} (${date})` });
     }
-    // version
-    if (data.version) {
-        if (data.time && data.time[data.version]) {
-            const date = chalk.green(new Date(data.time[data.version]).toLocaleString());
-            items.push({ label: "Version", field: `${data.version} (${date})` });
-        }
-        else {
-            items.push({ label: "Version", field: data.version });
-        }
+    else {
+      items.push({ label: "Version", field: data.version });
     }
-    // homepage
-    if (data.homepage) {
-        items.push({ label: "Homepage", field: data.homepage });
-    }
-    // author
-    if (data.author) {
-        items.push({ label: "Author", field: data.author });
-    }
-    // license
-    if (data.license) {
-        items.push({ label: "License", field: data.license });
-    }
-    // description
-    if (data.description) {
-        items.push({ label: "Description", field: data.description });
-    }
-    // keywords
-    if (data.keywords) {
-        items.push({ label: "Keywords", field: data.keywords.join(", ") });
-    }
-    // tags
-    if (data["dist-tags"]) {
-        const tags = Object.keys(data["dist-tags"]).sort();
-        const size = longest(tags).length;
-        const list = tags.map(tag => {
-            const version = data["dist-tags"][tag];
-            if (data.time && data.time[version]) {
-                const date = chalk.green(new Date(data.time[version]).toLocaleString());
-                return `${chalk.bold.yellow(pad(tag, size, " "))} : ${version} (${date})`;
-            }
-            else {
-                return `${chalk.bold.yellow(pad(tag, size, " "))} : ${version}`;
-            }
-        });
-        items.push({ label: "Tags", field: list.join("\n") });
-    }
-    // binaries
-    if (data.bin) {
-        items.push({ label: "Binaries", field: Object.keys(data.bin).sort().join(", ") });
-    }
-    // dependencies
-    if (program.dependencies && data.dependencies) {
-        const names = Object.keys(data.dependencies).sort();
-        const list = names.map(name => {
-            const version = data.dependencies[name];
-            return `${name}@${chalk.cyan(version)}`;
-        });
-        items.push({ label: "Dependencies", field: list.join(", ") });
-    }
+  }
+  // homepage
+  if (data.homepage) {
+    items.push({ label: "Homepage", field: data.homepage });
+  }
+  // author
+  if (data.author) {
+    items.push({ label: "Author", field: data.author });
+  }
+  // license
+  if (data.license) {
+    items.push({ label: "License", field: data.license });
+  }
+  // description
+  if (data.description) {
+    items.push({ label: "Description", field: data.description });
+  }
+  // keywords
+  if (data.keywords) {
+    items.push({ label: "Keywords", field: data.keywords.join(", ") });
+  }
+  // tags
+  if (data["dist-tags"]) {
+    const tags = Object.keys(data["dist-tags"]).sort();
+    const size = longest(tags).length;
+    const list = tags.map(tag => {
+      const version = data["dist-tags"][tag];
+      if (data.time && data.time[version]) {
+        const date = chalk.green(new Date(data.time[version]).toLocaleString());
+        return `${chalk.bold.yellow(pad(tag, size, " "))} : ${version} (${date})`;
+      }
+      else {
+        return `${chalk.bold.yellow(pad(tag, size, " "))} : ${version}`;
+      }
+    });
+    items.push({ label: "Tags", field: list.join("\n") });
+  }
+  // binaries
+  if (data.bin) {
+    items.push({ label: "Binaries", field: Object.keys(data.bin).sort().join(", ") });
+  }
+  // dependencies
+  if (program.dependencies && data.dependencies) {
+    const names = Object.keys(data.dependencies).sort();
+    const list = names.map(name => {
+      const version = data.dependencies[name];
+      return `${name}@${chalk.cyan(version)}`;
+    });
+    items.push({ label: "Dependencies", field: list.join(", ") });
+  }
 
-    // output
-    process.stdout.write(indent(createSummary(items), INDENT) + "\n");
+  // output
+  process.stdout.write(indent(createSummary(items), INDENT) + "\n");
 });
 
 function createSummary(items) {
-    const labelSize = longest(items.map(item => item.label)).length;
-    const fieldSize = WIDTH - (labelSize + " : ".length);
-    const list = items.map(item => {
-        const label = chalk.bold(pad(item.label, labelSize, " "));
-        if (strip(item.field).length <= fieldSize && item.field.indexOf("\n") < 0) {
-            const field = highlightLink(item.field);
-            return `${label} : ${field}`;
-        }
-        else {
-            const field = indent(wrap(highlightLink(item.field), WIDTH - INDENT * 2), INDENT);
-            return `${label} :\n${field}`;
-        }
-    });
-    return list.join("\n");
+  const labelSize = longest(items.map(item => item.label)).length;
+  const fieldSize = WIDTH - (labelSize + " : ".length);
+  const list = items.map(item => {
+    const label = chalk.bold(pad(item.label, labelSize, " "));
+    if (strip(item.field).length <= fieldSize && item.field.indexOf("\n") < 0) {
+      const field = highlightLink(item.field);
+      return `${label} : ${field}`;
+    }
+    else {
+      const field = indent(wrap(highlightLink(item.field), WIDTH - INDENT * 2), INDENT);
+      return `${label} :\n${field}`;
+    }
+  });
+  return list.join("\n");
 }
 
 function highlightLink(text) {
-    // TODO: better regexp?
-    return text.replace(/(https?\:\/\/[0-9A-Za-z\-_\.\/#&\?\=\+%]+)/g, url => chalk.blue.underline(url));
+  // TODO: better regexp?
+  return text.replace(
+    /(https?\:\/\/[0-9A-Za-z\-_\.\/#&\?\=\+%]+)/g,
+    url => chalk.blue.underline(url)
+  );
 }
